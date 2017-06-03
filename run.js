@@ -12,6 +12,8 @@ const latLongToken = `globalrelevanceex_sort/37.900323,-121.363907,36.835119,-12
 const REQUEST_BASE_INTERVAL = 60000;
 const REQUEST_STAGGER_INTERVAL = 20000;
 
+const AVE_SCHOOL_RATING_MINIMUM = 7;
+
 const metadataByCity = new Map([
   [ 'sunnyvale', new Map([
     [ 'zipcodeSearchPrefix', 'Sunnyvale-CA-' ],
@@ -82,12 +84,22 @@ function printCardArticleResult(result) {
 
 function parseDetail($detail) {
   const $bedsDetails = $detail.find('h3');
+  const $summarySection = $detail.find('section').eq(0);
+  const $schoolList = $detail.find('.nearby-schools-list');
   return {
     address: $detail.find('h1').text(),
-    price: $detail.find('#home-value-wrapper').find('.main-row.home-summary-row').text().trim(),
-    beds: $bedsDetails.find('span').eq(1).text(),
-    baths: $bedsDetails.find('span').eq(3).text(),
-    sqft: $bedsDetails.find('span').eq(5).text(),
+    price: $detail.find('#home-value-wrapper').find('.main-row.home-summary-row').text().trim().replace(/[,+$]/g, ''),
+    beds: $bedsDetails.find('span').eq(1).text().split(' ')[0],
+    baths: $bedsDetails.find('span').eq(3).text().split(' ')[0],
+    sqft: $bedsDetails.find('span').eq(5).text().split(' ')[0].replace(/,/g, ''),
+    openHouse: $summarySection.find('ul').eq(0).find('span').toArray().map((el) => {
+      return cheerio.load(el).text();
+    }).join(', '),
+    type: $summarySection.find('.zsg-media-bd').eq(0).find('div').text(),
+    built: $summarySection.find('.zsg-media-bd').eq(1).find('div').text(),
+    elementarySchoolRating: $schoolList.find('div.nearby-schools-rating').eq(0).find('span').text(),
+    middleSchoolRating: $schoolList.find('div.nearby-schools-rating').eq(1).find('span').text(),
+    highSchoolRating: $schoolList.find('div.nearby-schools-rating').eq(2).find('span').text(),
   }
 }
 
@@ -118,14 +130,47 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function checkSchoolRatingMinimum(detailResults) {
+  return ((parseInt(detailResults.elementarySchoolRating)
+      + parseInt(detailResults.middleSchoolRating)
+      + parseInt(detailResults.highSchoolRating)) / 3) >= AVE_SCHOOL_RATING_MINIMUM;
+}
+
+function fetchAndParseDetails(detailUrlList) {
+  let detailRequestCount = 0;
+  detailUrlList.forEach((detailUrl) => {
+    setTimeout(() => {
+      request.get(detailUrl, (error, response, body) => {
+        try {
+          const $ = cheerio.load(body);
+          const $detailContent = $('#search-detail-lightbox_content');
+          const results = parseDetail($detailContent);
+          if (checkSchoolRatingMinimum(results)) {
+            console.log(`${results.address}\t${results.price}\t${results.openHouse}\t${detailUrl}\t--\t` +
+                `${results.type}\t${results.built}\t${results.sqft}\t--\t--\t${results.beds}\t${results.baths}\t` +
+                `${results.elementarySchoolRating}\t${results.middleSchoolRating}\t${results.highSchoolRating}`);
+          }
+        } catch(e) {
+          console.log('Error:', e.stack);
+        }
+      });
+    }, Math.max(((detailRequestCount + 1) * REQUEST_BASE_INTERVAL) +
+        getRandomInt(-REQUEST_STAGGER_INTERVAL, REQUEST_STAGGER_INTERVAL), 0));
+    detailRequestCount++;
+  });
+}
+
 function run() {
   let articleRequestCount = 0;
+  let articleResponseCount = 0;
+  const detailUrlList = [];
   metadataByCity.forEach((metadata, city) => {
     metadata.get('zipcodes').forEach((zipcodeMetadata, zipcode) => {
       setTimeout(() => {
         const articleUrl = createArticleUrl(
           { location: `${metadata.get('zipcodeSearchPrefix')}${zipcode}` });
         request.get(articleUrl, (error, response, body) => {
+          articleResponseCount++;
           try {
             const $ = cheerio.load(body);
             const $searchArticles = $('#search-results').find('ul').first().find('article');
@@ -133,9 +178,14 @@ function run() {
               const results = parseCardArticle($(article));
               console.log(`${city}\t${zipcode}\t${results.price}\t${results.address}\t` +
                   `${results.beds}\t${results.sqft}\t${results.link}`);
+              detailUrlList.push(results.link);
             });
           } catch(e) {
             console.log('Error:', e.stack);
+          }
+          // TBD: replace with async
+          if (articleRequestCount == articleResponseCount) {
+            fetchAndParseDetails(detailUrlList);
           }
         });
       }, Math.max((articleRequestCount * REQUEST_BASE_INTERVAL) +
