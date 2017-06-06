@@ -40,6 +40,19 @@ const metadataByCity = new Map([
       [ 95128, new Map([[ 'note', 'Fruitdale' ]])],
     ])],
   ])],
+  [ 'sanjose', new Map([
+    [ 'zipcodeSearchPrefix', 'San-Jose-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 95134, new Map([[ 'note', 'Far North' ]])],
+      [ 95131, new Map([[ 'note', 'Berryessa' ]])],
+      [ 95112, new Map([[ 'note', 'Japantown' ]])],
+      [ 95126, new Map([[ 'note', 'Midtown' ]])],
+      [ 95110, new Map([[ 'note', 'Airport' ]])],
+      [ 95113, new Map([[ 'note', 'Downtown' ]])],
+      [ 95125, new Map([[ 'note', 'Willow Glen' ]])],
+      [ 95125, new Map([[ 'note', 'Willow Glen' ]])],
+    ])],
+  ])],
   [ 'cupertino', new Map([
     [ 'zipcodeSearchPrefix', 'Cupertino-CA-' ],
     [ 'zipcodes', new Map([
@@ -58,6 +71,63 @@ const metadataByCity = new Map([
     [ 'zipcodeSearchPrefix', 'Campbell-CA-' ],
     [ 'zipcodes', new Map([
       [ 95008, new Map([[ 'note', 'Campbell' ]])],
+    ])],
+  ])],
+  [ 'redwoodcity', new Map([
+    [ 'zipcodeSearchPrefix', 'Redwood-City-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94061, new Map([[ 'note', 'South' ]])],
+      [ 94063, new Map([[ 'note', 'East' ]])],
+      [ 94065, new Map([[ 'note', 'North' ]])],
+      [ 94062, new Map([[ 'note', 'Wilderness' ]])],
+    ])],
+  ])],
+  [ 'sancarlos', new Map([
+    [ 'zipcodeSearchPrefix', 'San-Carlos-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94070, new Map([[ 'note', 'San Carlos' ]])],
+    ])],
+  ])],
+  [ 'belmont', new Map([
+    [ 'zipcodeSearchPrefix', 'Belmont-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94002, new Map([[ 'note', 'San Carlos' ]])],
+    ])],
+  ])],
+  [ 'fostercity', new Map([
+    [ 'zipcodeSearchPrefix', 'Foster-City-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94404, new Map([[ 'note', 'Foster City' ]])],
+    ])],
+  ])],
+  [ 'sanmateo', new Map([
+    [ 'zipcodeSearchPrefix', 'San-Mateo-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94403, new Map([[ 'note', 'South East' ]])],
+      [ 94401, new Map([[ 'note', 'North' ]])],
+      [ 94402, new Map([[ 'note', 'South' ]])],
+    ])],
+  ])],
+  [ 'fremont', new Map([
+    [ 'zipcodeSearchPrefix', 'Fremont-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94555, new Map([[ 'note', 'North Bayside' ]])],
+      [ 94560, new Map([[ 'note', 'South Bayside' ]])],
+      [ 94536, new Map([[ 'note', 'Mid North' ]])],
+      [ 94538, new Map([[ 'note', 'Mid South' ]])],
+      [ 94539, new Map([[ 'note', 'East' ]])],
+    ])],
+  ])],
+  [ 'unioncity', new Map([
+    [ 'zipcodeSearchPrefix', 'Union-City-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 94587, new Map([[ 'note', 'Union City' ]])],
+    ])],
+  ])],
+  [ 'milpitas', new Map([
+    [ 'zipcodeSearchPrefix', 'Milpitas-CA-' ],
+    [ 'zipcodes', new Map([
+      [ 95035, new Map([[ 'note', 'Milpitas' ]])],
     ])],
   ])],
 ]);
